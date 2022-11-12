@@ -1,20 +1,49 @@
 // Teletext settings
 service = {}
-service.name = "teletext";
+service.name = "namn";
 service.lines = true;
+service.page = 100;
+service.weekname =  ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"];
+service.monthname = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug",
+"Sep", "Okt", "Nov", "Dec"];
 console.log(service.name);
 
 let cpX = 0;
 let cpY = 0;
 
-function write(blockX, blockY, string="j"){
-	text(string, blockX*16+6,blockY*16+12)
+function write(blockX, blockY, string=""){
+	if (string == "m") {
+		text(string, blockX*16+4,blockY*16+12);
+	} else {
+		text(string, blockX*16+6,blockY*16+12);
+	}
+}
+function printString(x, y, string=""){
+	for (i=0;i<string.length;i++){
+		write(x+i,y,string[i]);
+	}
+}
+
+function mouseClicked(){
+	if (mouseX <= 3*16 && mouseY <= 1*16){
+		prompt("Ny sida");
+	}
 }
 
 function nbg(color="#000000"){
 	stroke(color);
 	fill(color);
 }
+function justZero(number){
+	if (number <= 9) {
+		number = "0" + number.toString();
+	} else {
+		number = number.toString();
+	}
+	return number;
+}
+
+console.log(justZero(6));
 
 function setup(){
 	createCanvas(40*16,25*16);
@@ -31,24 +60,30 @@ function draw(){
 			line(0,i*16,width,i*16);
 		}
 	}
-	nbg("#ffff00")
-	for (i=0;i<service.name.length;i++){
-		write(i, 0, service.name[i]);
+	nbg("#ffffff");
+	for (i=0;i<3;i++) {
+		write(i,0, service.page.toString()[i]);
+	}
+	nbg("#ffff00");
+	for (i=4;i<service.name.length+4;i++){
+		write(i, 0, service.name[i-4]);
 	}
 	// Get time information
 	const d = new Date();
-	let seconds = d.getSeconds().toString();
-	let minutes = d.getMinutes().toString();
-	let hours = d.getHours().toString();
-	for (i=0;i<hours.length;i++){
-		write(32+i,0,hours[i]);
-	}
-	write(34, 0, ":");
-	for (i=0;i<minutes.length;i++){
-		write(35+i,0,minutes[i]);
-	}
-	write(37, 0, ":");
-	for (i=0;i<seconds.length;i++){
-		write(38+i,0,seconds[i]);
-	}
+	let seconds = d.getSeconds();
+	let minutes = d.getMinutes();
+	let hours = d.getHours();
+	printString(32,0,justZero(hours));
+	printString(34,0,":");
+	printString(35,0,justZero(minutes));
+	printString(37, 0, ":");
+	printString(38,0,justZero(seconds));
+	let weekday = d.getDay();
+	weekday = service.weekname[weekday];
+	printString(21,0,weekday);
+	let day = d.getDate();
+	printString(25,0,day.toString());
+	let month = d.getMonth();
+	month = service.monthname[month];
+	printString(28,0,month.toString());
 }
