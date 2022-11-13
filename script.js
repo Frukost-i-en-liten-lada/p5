@@ -9,7 +9,13 @@ service.monthname = ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug",
 service.justifiedLetters = ["m", "M", "w", "W", "C", "S", "@", "Q", "D", "E",
 "G", "N", "O", "R", "T", "U", "V", "Y", "Å", "Ä", "Ö", "Ü"];
 service.colors = ["#000000", "#ff0000", "#00ff00", "#0000ff",
-"#ffff00", "#00ffff", "#ff00ff", "#ffffff"]
+"#ffff00", "#00ffff", "#ff00ff", "#ffffff"];
+
+pagedata =
+{
+	"page100": ["Test message"],
+	"page101": ["Page 101 Test"]
+}
 
 // Current Pointer X & Y, Current Background Color variables used by 
 //the interpreter
@@ -81,19 +87,23 @@ function interpreter(page) {
 	cpX = 0;
 	cpY = 1;
 	nbg(7);
-	data = [":c:7", "Interpreter Test", ":n:", ":c:4", "Color ", ":c:5", "Test"]
-	for (const line of data) {
-		if (line.slice(0, 3) == ":c:"){
-			nbg(line[3]);
-		} else if (line == ":n:"){
-			cpX = 0;
-			cpY++;
-		} else if (line.slice(0,3) == ":b:"){
-			blockPattern(cpX, cpY, line[3]);
-		} else if (line.slice(0,3) == ":a:"){
-			cpX++;
-		} else {
-			psj(cpX, cpY, line);
+	// data = [":c:7", "Interpreter Test", ":n:", ":c:4", "Color ", ":c:5", "Test"]
+	let pagename = "page" + page.toString();
+	if (pagedata.hasOwnProperty(pagename)){
+		let data = pagedata[pagename];
+		for (const line of data) {
+			if (line.slice(0, 3) == ":c:"){
+				nbg(line[3]);
+			} else if (line == ":n:"){
+				cpX = 0;
+				cpY++;
+			} else if (line.slice(0,3) == ":b:"){
+				blockPattern(cpX, cpY, line[3]);
+			} else if (line.slice(0,3) == ":a:"){
+				cpX++;
+			} else {
+				psj(cpX, cpY, line);
+			}
 		}
 	}
 }
